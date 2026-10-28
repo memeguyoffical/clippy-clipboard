@@ -19,19 +19,20 @@ row, and everything it stores is encrypted before it touches disk.
 
 ## Download and install
 
-1. Download [`dist/Clippy.exe`](dist/Clippy.exe) or grab the latest
-   [release](../../releases/latest).
-2. Install the [.NET 10 Desktop Runtime (x64)](https://dotnet.microsoft.com/download/dotnet/10.0)
-   if it is not already present. Clippy is framework-dependent, which is why the
-   exe is 2.6 MB instead of 60 MB.
-3. Put `Clippy.exe` anywhere you like and run it. There is no installer.
-4. Press **Win+V**. Clippy sits in the tray and starts with Windows by default.
+1. Download one of these:
+   - [`dist/Clippy.exe`](dist/Clippy.exe) — **2.6 MB**, needs the
+     [.NET 10 Desktop Runtime (x64)](https://dotnet.microsoft.com/download/dotnet/10.0).
+   - [`Clippy-Portable.exe`](../../releases/latest/download/Clippy-Portable.exe) —
+     **48 MB**, self-contained; no runtime install, runs on any Windows 10/11 x64
+     machine.
+2. Put the exe anywhere you like and run it. There is no installer.
+3. Press **Win+V**. Clippy sits in the tray and starts with Windows by default.
 
 The exe is not code-signed, so Windows SmartScreen may show a warning on first
 run. Choose **More info → Run anyway** if you downloaded it from this repository
 or its Releases page. The full source is here to audit.
 
-Windows 10 or Windows 11, x64.
+Windows 10 or Windows 11, x64. Settings and history are shared by both builds.
 
 ## Why Clippy instead of another clipboard manager
 
@@ -162,11 +163,14 @@ Requires the .NET 10 SDK.
 dotnet build
 dotnet test
 dotnet publish src\Clippy.App -c Release -o artifacts\publish
+dotnet publish src\Clippy.App -c Release -r win-x64 --self-contained true `
+  -p:PublishSingleFile=true -p:EnableCompressionInSingleFile=true -o artifacts\portable
 ```
 
-The publish step produces `artifacts\publish\Clippy.exe` as a single
-framework-dependent file. The checked-in [`dist/Clippy.exe`](dist/Clippy.exe) is
-that output from the tagged source.
+The first publish produces `artifacts\publish\Clippy.exe` as a single
+framework-dependent file (2.6 MB). The second produces the self-contained
+`Clippy-Portable.exe` (48 MB). The checked-in [`dist/Clippy.exe`](dist/Clippy.exe)
+is the small build from the tagged source.
 
 Startup flags:
 
@@ -217,15 +221,16 @@ it can move the cursor, send Win+V, type keys and save a screenshot.
 
 - OCR is not implemented, so text inside screenshots is not searchable.
 - No sync, export, import or cloud history.
-- The exe is unsigned.
+- The small exe needs the .NET 10 Desktop Runtime; the portable build does not.
+- The exes are unsigned.
 - Pasting into elevated windows needs Clippy to run elevated too; Windows blocks
   synthetic input across integrity levels.
 - One instance per user session; fast user switching is not handled.
 - The popup has no password lock. Anyone at the unlocked desktop can open it.
 - Image and file clips are stored, but previews are minimal: a small thumbnail
   for images, file names for file lists.
-- Trimming is off because WinForms is not trim-safe. A self-contained build
-  would remove the runtime requirement but grow to roughly 60 MB.
+- Trimming is off because WinForms is not trim-safe; the portable build carries
+  the whole runtime (48 MB) instead of trimming it.
 
 ## License
 
