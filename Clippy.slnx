@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Clippy.App/Clippy.App.csproj" />
+    <Project Path="src/Clippy.Core/Clippy.Core.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Clippy.Core.Tests/Clippy.Core.Tests.csproj" />
+  </Folder>
+</Solution>
